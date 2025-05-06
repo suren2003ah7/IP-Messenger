@@ -1,0 +1,47 @@
+import xml.etree.ElementTree as ET
+import socket as sock
+import subprocess
+import re
+
+from client_utils import contacts, PORT
+
+def get_my_ip():
+    result = subprocess.run(["ifconfig"], capture_output=True, text=True)
+    output = result.stdout
+
+    matches = re.findall(r"inet (192\.\d+\.\d+\.\d+)", output)
+    return matches[0] if matches else None
+
+def message_to_xml_string(to_ip, message):
+    attributes = {
+        "to": to_ip,
+        "from": get_my_ip(),
+        "type": "chat",
+        "xmlns": "jabber:client"
+    }
+
+    xmpp_message = ET.Element("message", attributes)
+    ET.SubElement(xmpp_message, "body").text = message
+
+    return ET.tostring(xmpp_message, encoding="unicode")
+
+def send_message(name, message):
+    ip = ""
+    for contact in contacts:
+        if contact.name == name:
+            ip = contact.ip
+            break
+    
+    if ip == "":
+        print("Contact not found!")
+        return
+    
+    xmpp_message = message_to_xml_string(ip, message)
+
+    with sock.socket(sock.AF_INET, sock.SOCK_STREAM) as s:
+        try:
+            s.connect((ip, PORT))
+            s.sendall(xmpp_message.encode())
+        except ConnectionRefusedError:
+            print(f"Unable to establish connection with user! IP: {ip}")
+            s.close()
