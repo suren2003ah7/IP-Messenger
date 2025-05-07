@@ -6,11 +6,28 @@ import re
 from client_utils import contacts, PORT
 
 def get_my_ip():
-    result = subprocess.run(["ifconfig"], capture_output=True, text=True)
-    output = result.stdout
-    
-    matches = re.findall(r"inet ((?:192|10|172\.(?:1[6-9]|2[0-9]|3[0-1]))\.\d+\.\d+\.\d+)", output)
-    return matches[0] if matches else None
+    try:
+        result = subprocess.run(["ifconfig"], capture_output=True, text=True, check=True)
+        output = result.stdout
+
+        match = re.search(r"inet ((?:192|10|172\.(?:1[6-9]|2[0-9]|3[0-1]))\.\d+\.\d+\.\d+)", output)
+        if match:
+            return match.group(1)
+    except Exception:
+        pass
+
+    try:
+        result = subprocess.run(["ipconfig"], capture_output=True, text=True, check=True)
+        output = result.stdout
+
+        match = re.search(r"IPv4 Address[^\d]*: ((?:192|10|172\.(?:1[6-9]|2[0-9]|3[0-1]))\.\d+\.\d+\.\d+)", output)
+        if match:
+            return match.group(1)
+    except Exception:
+        pass
+
+    print("Unable to identify local IP address!")
+    return None
 
 def message_to_xml_string(to_ip, message):
     attributes = {
