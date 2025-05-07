@@ -8,8 +8,8 @@ from client_utils import contacts, PORT
 def get_my_ip():
     result = subprocess.run(["ifconfig"], capture_output=True, text=True)
     output = result.stdout
-
-    matches = re.findall(r"inet (?:192|10|172\.(?:1[6-9]|2[0-9]|3[0-1]))\.\d+\.\d+\.\d+", output)
+    
+    matches = re.findall(r"inet ((?:192|10|172\.(?:1[6-9]|2[0-9]|3[0-1]))\.\d+\.\d+\.\d+)", output)
     return matches[0] if matches else None
 
 def message_to_xml_string(to_ip, message):
