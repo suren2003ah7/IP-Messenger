@@ -12,7 +12,7 @@ def set_ipv6(new_ipv6, scope_id):
     global MY_IPv6
     global MY_SCOPE_ID
     MY_IPv6 = new_ipv6
-    MY_SCOPE_ID = scope_id
+    MY_SCOPE_ID = int(scope_id)
     print(f"Your IPv6 is configured to: {MY_IPv6}")
     print(f"Your scope id is configured to: {MY_SCOPE_ID}")
 
