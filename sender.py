@@ -94,9 +94,9 @@ def send_message(name, message):
 
         with sock.socket(sock.AF_INET6, sock.SOCK_STREAM) as s:
             try:
-                s.connect((ip, PORT, 0, 0))
+                s.connect((ipv6, PORT, 0, 0))
                 s.sendall(xmpp_message.encode())
             except ConnectionRefusedError:
-                print(f"Unable to establish connection with user! IPv6: {ip}")
+                print(f"Unable to establish connection with user! IPv6: {ipv6}")
                 s.close()
 
