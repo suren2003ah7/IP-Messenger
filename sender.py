@@ -5,6 +5,8 @@ import re
 
 from client_utils import contacts, PORT
 
+MY_IPv6 = "_"
+
 def get_my_ip():
     try:
         result = subprocess.run(["ifconfig"], capture_output=True, text=True, check=True)
@@ -42,24 +44,54 @@ def message_to_xml_string(to_ip, message):
 
     return ET.tostring(xmpp_message, encoding="unicode")
 
+def message_to_xml_string_ipv6(to_ip, message):
+    attributes = {
+        "to": to_ip,
+        "from": MY_IPv6,
+        "type": "chat",
+        "xmlns": "jabber:client"
+    }
+
+    xmpp_message = ET.Element("message", attributes)
+    ET.SubElement(xmpp_message, "body").text = message
+
+    return ET.tostring(xmpp_message, encoding="unicode")
+
 def send_message(name, message):
-    ip = ""
+    ip = "_"
+    ipv6 = "_"
     for contact in contacts:
         if contact.name == name:
             ip = contact.ip
+            ipv6 = contact.ipv6
             break
     
-    if ip == "":
+    if ip == "_" and ipv6 == "_":
         print("Contact not found!")
         return
     
-    xmpp_message = message_to_xml_string(ip, message)
+    if ip != "_":
+        xmpp_message = message_to_xml_string(ip, message)
 
-    with sock.socket(sock.AF_INET, sock.SOCK_STREAM) as s:
-        try:
-            s.connect((ip, PORT))
-            s.sendall(xmpp_message.encode())
-        except ConnectionRefusedError:
-            print(f"Unable to establish connection with user! IP: {ip}")
-            s.close()
+        with sock.socket(sock.AF_INET, sock.SOCK_STREAM) as s:
+            try:
+                s.connect((ip, PORT))
+                s.sendall(xmpp_message.encode())
+            except ConnectionRefusedError:
+                print(f"Unable to establish connection with user! IPv4: {ip}")
+                s.close()
+    else:
+        if MY_IPv6 == "_":
+            print("Configure your IPv6 first!")
+            return
+
+        xmpp_message = message_to_xml_string_ipv6(ipv6, message)
+
+        with sock.socket(sock.AF_INET6, sock.SOCK_STREAM) as s:
+            try:
+                s.connect((ip, PORT, 0, 0))
+                s.sendall(xmpp_message.encode())
+            except ConnectionRefusedError:
+                print(f"Unable to establish connection with user! IPv6: {ip}")
+                s.close()
 

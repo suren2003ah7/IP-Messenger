@@ -1,8 +1,8 @@
 import client_utils as cutl
 import threading
 
-from sender import send_message, get_my_ip
-from receiver import listen_to_messages, stop_event
+from sender import send_message, get_my_ip, MY_IPv6
+from receiver import stop_event, listen_ipv4, listen_ipv6
 
 print("")
 print("--------------------------------------------------------------------------------------------------------------")
@@ -12,8 +12,11 @@ print("To exit type \"q\"")
 print("--------------------------------------------------------------------------------------------------------------")
 print("")
 
-receiver = threading.Thread(target=listen_to_messages)
+receiver = threading.Thread(target=listen_ipv4)
 receiver.start()
+
+receiveripv6 = threading.Thread(target=listen_ipv6)
+receiveripv6.start()
 
 while True:
     user_input = input("> ")
@@ -26,10 +29,10 @@ while True:
         cutl.print_contacts()
     elif user_input[0:3] == "add":
         information = user_input.split(" ")
-        if len(information) != 3:
+        if len(information) != 4:
             print("Inappropriate usage of command \"add\"")
             continue
-        cutl.add_contact(information[1], information[2])
+        cutl.add_contact(information[1], information[2], information[3])
     elif user_input[0:6] == "delete":
         information = user_input.split(" ")
         if len(information) != 2:
@@ -47,11 +50,14 @@ while True:
         name = information[1]
         newname = ""
         newip = ""
+        newipv6 = ""
         if "-name" in information:
             newname = information[information.index("-name") + 1]
         if "-ip" in information:
             newip = information[information.index("-ip") + 1]
-        cutl.edit_contact_by_name(name, newname, newip)
+        if "-ipv6" in information:
+            newipv6 = information[information.index("-ipv6") + 1]
+        cutl.edit_contact_by_name(name, newname, newip, newipv6)
     elif user_input[0:6] == "import":
         information = user_input.split(" ")
         if len(information) != 2:
@@ -69,11 +75,17 @@ while True:
         index = 6 + len(name)
         send_message(name, user_input[index:])
     elif user_input == "ip":
-        print(f"Your IP is: {get_my_ip()}")
+        print(f"Your IPv4 is: {get_my_ip()}")
+    elif user_input[0:9] == "configure":
+        MY_IPv6 = user_input.split(" ")[1];
+        print(f"Your IPv6 is configured to: {MY_IPv6}")
+    elif user_input == "ipv6":
+        print(f"Your IPv6 is: {MY_IPv6}")
     else:
         print("Invalid command!")
 
 print("Terminating...")
 stop_event.set()
 receiver.join()
+receiveripv6.join()
 print("Thank you for using IP Messanger! Have a nice day!")

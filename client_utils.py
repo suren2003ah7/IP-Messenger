@@ -33,12 +33,17 @@ def print_contacts():
         print(str(i) + ") " + str(contact))
         i+=1
 
-def add_contact(name, ip):
+def add_contact(name, ip, ipv6):
     for contact in contacts:
         if contact.name == name:
             print(f"Unable to create contact as the name {name} is already in use!")
             return
-    contacts.append(Contact(name, ip))
+        
+    if ip == "_" and ipv6 == "_":
+        print("At least one IP address must be present!")
+        return
+
+    contacts.append(Contact(name, ip, ipv6))
     print("Contact successfully added!")
 
 def delete_contact_by_name(name):
@@ -53,7 +58,7 @@ def delete_all_contacts():
     contacts.clear()
     print("Deleted all contacts!")
 
-def edit_contact_by_name(name, new_name, new_ip):
+def edit_contact_by_name(name, new_name, new_ip, new_ipv6):
     for contact in contacts:
         if contact.name == new_name:
             print(f"The name {new_name} is already in use!")
@@ -65,6 +70,8 @@ def edit_contact_by_name(name, new_name, new_ip):
                 contact.name = new_name
             if new_ip != "":
                 contact.ip = new_ip
+            if new_ipv6 != "":
+                contact.ipv6 = new_ipv6
             print("Contact modified to: " + str(contact))
             return
     print("Contact not found!")
@@ -74,7 +81,7 @@ def import_from_json(filename):
         imported_contacts = json.load(file)
 
     for contact in imported_contacts:
-        add_contact(contact["name"], contact["ip"])
+        add_contact(contact["name"], contact["ip"], contact["ipv6"])
     
     print(f"Successfully imported from {filename}")
 
