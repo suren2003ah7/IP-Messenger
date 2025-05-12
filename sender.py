@@ -7,6 +7,10 @@ from client_utils import contacts, PORT
 
 MY_IPv6 = "_"
 
+def set_ipv6(new_ipv6):
+    MY_IPv6 = new_ipv6
+    print(f"Your IPv6 is configured to: {MY_IPv6}")
+
 def get_my_ip():
     try:
         result = subprocess.run(["ifconfig"], capture_output=True, text=True, check=True)
