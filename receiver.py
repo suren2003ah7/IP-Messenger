@@ -20,7 +20,7 @@ def handle_client(contact_client, address):
 
         display_name = sender_ip
         for contact in contacts:
-            if contact.ip == sender_ip or contact.ip6 == sender_ip:
+            if contact.ip == sender_ip or contact.ipv6 == sender_ip:
                 display_name = contact.name
 
         print("")
