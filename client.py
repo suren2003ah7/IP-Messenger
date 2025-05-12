@@ -77,7 +77,7 @@ while True:
     elif user_input == "ip":
         print(f"Your IPv4 is: {sender.get_my_ip()}")
     elif user_input[0:9] == "configure":
-        sender.set_ipv6(user_input.split(" ")[1])
+        sender.set_ipv6(user_input.split(" ")[1], user_input.split(" ")[2])
     elif user_input == "ipv6":
         print(f"Your IPv6 is: {sender.MY_IPv6}")
     else:

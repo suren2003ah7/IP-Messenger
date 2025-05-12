@@ -6,11 +6,15 @@ import re
 from client_utils import contacts, PORT
 
 MY_IPv6 = "_"
+MY_SCOPE_ID = None
 
-def set_ipv6(new_ipv6):
+def set_ipv6(new_ipv6, scope_id):
     global MY_IPv6
+    global MY_SCOPE_ID
     MY_IPv6 = new_ipv6
+    MY_SCOPE_ID = scope_id
     print(f"Your IPv6 is configured to: {MY_IPv6}")
+    print(f"Your scope id is configured to: {MY_SCOPE_ID}")
 
 def get_my_ip():
     try:
@@ -94,7 +98,7 @@ def send_message(name, message):
 
         with sock.socket(sock.AF_INET6, sock.SOCK_STREAM) as s:
             try:
-                s.connect((ipv6, PORT, 0, 0))
+                s.connect((ipv6, PORT, 0, MY_SCOPE_ID))
                 s.sendall(xmpp_message.encode())
             except ConnectionRefusedError:
                 print(f"Unable to establish connection with user! IPv6: {ipv6}")
