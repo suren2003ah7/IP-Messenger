@@ -1,7 +1,7 @@
 import client_utils as cutl
 import threading
 
-from sender import send_message, get_my_ip, MY_IPv6, set_ipv6
+import sender
 from receiver import stop_event, listen_ipv4, listen_ipv6
 
 print("")
@@ -73,13 +73,13 @@ while True:
     elif user_input[0:4] == "send":
         name = user_input.split(" ")[1]
         index = 6 + len(name)
-        send_message(name, user_input[index:])
+        sender.send_message(name, user_input[index:])
     elif user_input == "ip":
-        print(f"Your IPv4 is: {get_my_ip()}")
+        print(f"Your IPv4 is: {sender.get_my_ip()}")
     elif user_input[0:9] == "configure":
-        set_ipv6(user_input.split(" ")[1])
+        sender.set_ipv6(user_input.split(" ")[1])
     elif user_input == "ipv6":
-        print(f"Your IPv6 is: {MY_IPv6}")
+        print(f"Your IPv6 is: {sender.MY_IPv6}")
     else:
         print("Invalid command!")
 

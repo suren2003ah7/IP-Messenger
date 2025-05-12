@@ -8,6 +8,7 @@ from client_utils import contacts, PORT
 MY_IPv6 = "_"
 
 def set_ipv6(new_ipv6):
+    global MY_IPv6
     MY_IPv6 = new_ipv6
     print(f"Your IPv6 is configured to: {MY_IPv6}")
 
