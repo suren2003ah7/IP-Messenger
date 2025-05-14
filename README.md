@@ -56,5 +56,5 @@ At the application prompt, use the following commands:
 
 ```bash
 > add Alice 192.168.1.5 fe80::1ff:fe23:4567:890a
-> send Alice "Hello, Alice!"
+> send Alice Hello, Alice!
 ```
