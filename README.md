@@ -1,6 +1,6 @@
 # IP Messenger CLI
 
-A lightweight command-line IP messenger that allows direct messaging between clients over IPv4 and IPv6.
+A lightweight command-line IP messenger that allows direct messaging between clients over local IPv4 and IPv6.
 
 ## Features
 
